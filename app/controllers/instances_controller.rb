@@ -297,7 +297,6 @@ class InstancesController < ApplicationController
   end
 
   def list_instances
-    # TODO: move these....?
     unless admins.include?(params["user_id"])
       Rails.logger.warn({
         :event => "unauthorized decline request",
@@ -313,7 +312,6 @@ class InstancesController < ApplicationController
   end
 
   def send_reminders
-    # TODO: Move this to an ENV var
     # TODO: figure out a better way to authenticate this
     static_password = "dont$p@mM3"
 

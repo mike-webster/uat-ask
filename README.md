@@ -32,7 +32,8 @@ A tool to help manage a UAT environment
         `{yourhost.com}/instances/user-response`
 
 ## Installation
-- TODO
+- `bundle install`
+- `rails db:create db:migrate`
 
 ## Environment Variables
 - `BOT_TOKEN`

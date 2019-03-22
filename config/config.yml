@@ -3,3 +3,12 @@ default: &default
   uat_gatekeeper: <%= ENV['GATEKEEPER'] %>
   admin_slack_ids: <%= ENV['ADMINS'] %>
   slack_email_domain: <%= ENV['SLACK_DOMAIN'] %>
+
+development: 
+  <<: *default
+
+test: 
+  <<: *default
+
+production: 
+  <<: *default

@@ -5,7 +5,7 @@ defaults: &defaults
   reconnect: true
   encoding: utf8
   username: root
-  database: <%= ENV['DB_NAME'] || uatask %>
+  database: <%= ENV['DB_NAME'] || 'uatask' %>
 
 development:
   <<: *defaults
@@ -13,13 +13,12 @@ development:
   password:
   port: 3306
 
+test:
+  <<: *defaults
+  password:
+  port: 3306
+
 production:
   <<: *defaults
   username: <%= ENV['DB_USER'] %>
   password: <%= ENV['DB_PASS'] %>
-
-test:
-  <<: *defaults
-  username: <%= ENV['DB_USER'] %>
-  password: <%= ENV['DB_PASS'] %>
-  port: 3306

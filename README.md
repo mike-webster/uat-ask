@@ -39,7 +39,7 @@ A tool to help manage a UAT environment
     - The OAuth token you received while setting up the slack app
 - `GATEKEEPER`
     - The Slack ID for the user who is in charge of the UAT environment (ex: U3B1QPCWJ)
-- `ADMIMS`
+- `ADMINS`
     - This is a list of Slack IDs for users who may want read-only access to certain features.
 - `SLACK_DOMAIN`
     - This is the organization's email address that are used to create user's accounts.

@@ -24,17 +24,17 @@ class InstancesController < ApplicationController
     ps = params["text"].split(",")
     uat_env = ps[0] || ""
     user_id = params["user_id"]
-    librarian_id = APP_CONFIG["uat_librarian"]
+    gatekeeper_id = APP_CONFIG["uat_gatekeeper"]
     user_response = "I'm asking now, I'll let you know what they say :loading:"
 
-    message_to_librarian = "Hey, `@#{username}` would like to know if there's a UAT instance open for `#{uat_env}`"
-    message_to_librarian << "\n----- ----- ----- -----\n** Feature: #{ps[1] || ''}\n** Description: #{ps[2] || ''}\n----- ----- ----- -----"
-    message_to_librarian2 = "UAT instances:\n" + get_instance_report
+    message_to_gatekeeper = "Hey, `@#{username}` would like to know if there's a UAT instance open for `#{uat_env}`"
+    message_to_gatekeeper << "\n----- ----- ----- -----\n** Feature: #{ps[1] || ''}\n** Description: #{ps[2] || ''}\n----- ----- ----- -----"
+    message_to_gatekeeper2 = "UAT instances:\n" + get_instance_report
 
     bot_token = APP_CONFIG["slack_bot_token"]
     SlackClient.send_uat_bot_message(user_id, user_response, bot_token)
-    SlackClient.send_uat_bot_message(librarian_id, message_to_librarian, bot_token)
-    SlackClient.send_uat_bot_message(librarian_id, message_to_librarian2, bot_token)
+    SlackClient.send_uat_bot_message(gatekeeper_id, message_to_gatekeeper, bot_token)
+    SlackClient.send_uat_bot_message(gatekeeper_id, message_to_gatekeeper2, bot_token)
 
     Rails.logger.info({
       :event => "ask_for_instance",
@@ -255,39 +255,43 @@ class InstancesController < ApplicationController
   end
 
   def help_info
-    # TODO: Is there a way to generalize this?
+    instance_names = []
+    Instances.all.each do |i|
+      instance_names << i.name
+    end
+    
     message = "Ask For UAT Commands:\n\n"
     message << "_ (all lists are comma delimited) _\n"
-    message << "1.) `/uat-ask [waldo/iggy/learnable/mainsite], [feature_name], [description]`\n"
-    message << "    This can be used by anyone to request a UAT instance from Lily.\n"
-    message << "    - [waldo/iggy/learnable/mainsite] is used to specify which app needs the UAT environment.\n"
+    message << "1.) `/uat-ask [#{instance_names.join("/")}], [feature_name], [description]`\n"
+    message << "    This can be used by anyone to request a UAT instance.\n"
+    message << "    - [#{instance_names.join("/")}] is used to specify which app needs the UAT environment.\n"
     message << "    - [feature_name] is the name of the branch you would like to move to UAT.\n"
     message << "    - [description] is a quick description of what the branch is doing.\n"
-    message << "    Lily will get a notification that a request has been made and when she approves or declines the request the person who made the request will receive a notification with some additional information.\n\n"
+    message << "    The gatekeeper will get a notification that a request has been made and when they approve or decline the request the person who made the request will receive a notification with some additional information.\n\n"
     message << "2.) `/uat-approve [instance_name], [assignee], [feature_name], [description]`\n"
-    message << "    This is used by Lily to approve a request for a UAT instance.\n"
-    message << "    _Anyone other than Lily will receive a 403._\n"
+    message << "    This is used by the gatekeeper to approve a request for a UAT instance.\n"
+    message << "    _Anyone other than the gatekeeper will receive a 403._\n"
     message << "    - [instance_name] is required and must match an existing instance name.\n"
-    message << "    - [assignee] is optional but must match a valid wyzant slack username (without the '@') if provided. If left blank, the assignee will be cleared in the database.\n"
+    message << "    - [assignee] is optional but must match a valid slack username in your organization (without the '@') if provided. If left blank, the assignee will be cleared in the database.\n"
     message << "    - [feature_name] is optional. Use this to keep track of what branch is loaded on each UAT instance. If left blank, the feature_name will default to 'master'.\n"
     message << "    - [description] is optional. Use this for any notes you have.\n\n"
     message << "3.) `/uat-decline [username], [message to user]`\n"
-    message << "    This is used by Lily to decline a request for a UAT instance.\n"
-    message << "    _Anyone other than Lily will receive a 403._\n"
-    message << "    - [username] is required and must match a valid wyzant slack username (without the '@').\n"
-    message << "    - [message to user] is whatever message Lily wants to convey along with the 'decline' of the request.\n\n"
+    message << "    This is used by the gatekeeper to decline a request for a UAT instance.\n"
+    message << "    _Anyone other than the gatekeeper will receive a 403._\n"
+    message << "    - [username] is required and must match a valid slack username (without the '@').\n"
+    message << "    - [message to user] is whatever message the gatekeeper wants to convey along with the 'decline' of the request.\n\n"
     message << "4.) `/uat-done` [instance_name]\n"
-    message << "    This is used by anyone to tell Lily that she can give someone else the UAT instance you were using.\n"
+    message << "    This is used by anyone to tell the gatekeeper that they can give someone else the UAT instance you were using.\n"
     message << "    - [instance_name] is used to specify which existing instance the user has finished using.\n"
     message << "5.) `/uat-report`\n"
-    message << "    This can be used by Lily to see the current status of all UAT instances.\n"
+    message << "    This can be used by the gatekeeper to see the current status of all UAT instances.\n"
     message << "--) Active instance_names:\n    "
 
     Instances.all.each do |i|
       message << "#{i.name}, "
     end
 
-    message << "\n\n!! If you need any more help, or have any suggestions, feel free to DM @mwebster" 
+    message << "\n\n!! If you need any more help, or have any suggestions, feel free to DM the gatekeeper" 
 
     render status: 200, body: message
   end

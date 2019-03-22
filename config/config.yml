@@ -2,6 +2,6 @@ default: &default
   host: # TODO
   slack_bot_token: # TODO
   slack_hook: # TODO
-  uat_librarian: # TODO
+  uat_gatekeeper: # TODO
   admin_slack_ids: # TODO
   slack_email_domain: # TODO

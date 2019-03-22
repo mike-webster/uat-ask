@@ -1,0 +1,5 @@
+default: &default
+  host: #TODO
+  slack_bot_token: #TODO
+  slack_hook: #TODO
+  uat_librarian: #TODO

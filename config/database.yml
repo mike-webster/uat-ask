@@ -5,7 +5,7 @@ defaults: &defaults
   reconnect: true
   encoding: utf8
   username: root
-  database: <%= ENV['DATABASE'] %>
+  database: <%= ENV['DB_NAME'] || uatask %>
 
 development:
   <<: *defaults

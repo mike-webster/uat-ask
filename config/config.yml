@@ -1,7 +1,5 @@
 default: &default
-  host: <%= ENV['HOST'] %>
   slack_bot_token: <%= ENV['BOT_TOKEN'] %>
-  slack_hook: <%= ENV['SLACK_HOOK'] %>
   uat_gatekeeper: <%= ENV['GATEKEEPER'] %>
   admin_slack_ids: <%= ENV['ADMINS'] %>
   slack_email_domain: <%= ENV['SLACK_DOMAIN'] %>

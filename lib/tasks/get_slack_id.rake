@@ -10,8 +10,7 @@ task get_slack_id: :environment do
 
         bot_token = APP_CONFIG["slack_bot_token"]
         
-        # TODO - strip out specific domain from here and move to config
-        su = SlackClient.get_username_by_email(username.strip+"@wyzant.com",bot_token)
+        su = SlackClient.get_username_by_email(username.strip+"@#{APP_CONFIG["slack_email_domain"]}.com",bot_token)
         puts event: "retrieved_slack_id", id: su
         end
     rescue StandardError => e

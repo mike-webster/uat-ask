@@ -127,8 +127,7 @@ class InstancesController < ApplicationController
     unless to_whom.blank?
       bot_token = APP_CONFIG["slack_bot_token"]
 
-        # TODO - strip out specific domain from here and move to config
-      su = SlackClient.get_username_by_email(to_whom.strip+"@wyzant.com",bot_token)
+      su = SlackClient.get_username_by_email(to_whom.strip+"@#{APP_CONFIG["slack_email_domain"]}.com",bot_token)
 
       if su.nil?
         Rails.logger.error({
@@ -190,8 +189,7 @@ class InstancesController < ApplicationController
     message = payload[1] unless payload[1].blank?
     bot_token = APP_CONFIG["slack_bot_token"]
 
-        # TODO - strip out specific domain from here and move to config
-    su = SlackClient.get_username_by_email(username.strip+"@wyzant.com",bot_token)
+    su = SlackClient.get_username_by_email(username.strip+"@#{APP_CONFIG["slack_email_domain"]}.com",bot_token)
 
     if su.nil?
       Rails.logger.info({
@@ -296,8 +294,7 @@ class InstancesController < ApplicationController
 
   def list_instances
     # TODO: move these....?
-    allowed = ["U04M7SLEN", "U0FKT6NKZ", "U3A18UAHW", "U3V5EKTLJ"]
-    unless allowed.include?(params["user_id"])
+    unless admins.include?(params["user_id"])
       Rails.logger.warn({
         :event => "unauthorized decline request",
         :params => params,
@@ -313,6 +310,7 @@ class InstancesController < ApplicationController
 
   def send_reminders
     # TODO: Move this to an ENV var
+    # TODO: figure out a better way to authenticate this
     static_password = "dont$p@mM3"
 
     if params["token"] != static_password
@@ -331,8 +329,7 @@ class InstancesController < ApplicationController
     Instances.all.each do |i|
       next if i.assigned_to.nil?
       
-        # TODO - strip out specific domain from here and move to config
-      su = SlackClient.get_username_by_email(i.assigned_to.strip+"@wyzant.com",bot_token)
+      su = SlackClient.get_username_by_email(i.assigned_to.strip+"@#{APP_CONFIG["slack_email_domain"]}.com",bot_token)
       if Time.now.utc - i.updated.localtime("+00:00") > 1.day
         message = "Hey! We're just checking in on your UAT instance - are you still using `#{i.name}`?\n"
         resp = SlackClient.send_uat_bot_reminder(su, message, bot_token)
@@ -384,25 +381,24 @@ class InstancesController < ApplicationController
     # so... I think the way this will work is just an
     # ordered, comma delimited list... so the values
     # will just need to match up
-    # TODO: rename "ps"
-    ps = params_text.split(",")
+    payload = params_text.split(",")
     errors = ""
-    if ps.count < 3
+    if payload.count < 3
       return format_errors(ERR_V_MESSAGE, ERR_ASK_INCOMPLETE)
     end
 
-    unless ["iggy","waldo", "learnable", "mainsite"].include?(ps[0].downcase)
+    unless ["iggy","waldo", "learnable", "mainsite"].include?(payload[0].downcase)
       errors << ERR_ASK_UAT
     end
 
-    unless ps[1].length > 0
+    unless payload[1].length > 0
       unless errors.empty?
           errors << "\n"
       end
       errors << ERR_ASK_FEATURE
     end
 
-    unless ps[2].length > 0
+    unless payload[2].length > 0
       unless errors.empty?
           errors << "\n"
       end
@@ -419,8 +415,7 @@ class InstancesController < ApplicationController
   end
 
   def admins
-    # TODO: we can just make this a field in the config
-   ["U04M7SLEN",APP_CONFIG["uat_librarian"]]
+   APP_CONFIG["admin_slack_ids"]
  end
 
   def auth

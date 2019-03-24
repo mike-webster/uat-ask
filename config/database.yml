@@ -22,3 +22,5 @@ production:
   <<: *defaults
   username: <%= ENV['DB_USER'] %>
   password: <%= ENV['DB_PASS'] %>
+  host: "db"
+  port: 3306

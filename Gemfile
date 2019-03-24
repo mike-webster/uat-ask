@@ -19,7 +19,6 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 gem 'excon'
-gem 'gruff'
 gem 'mysql2'
 gem 'turbolinks'
 gem 'dotenv-rails'

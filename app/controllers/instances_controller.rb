@@ -72,6 +72,10 @@ class InstancesController < ApplicationController
     render :status => 200, :body => "#{get_instance_report}"
   end
 
+  def healthcheck
+    render status:200, body: "ok"
+  end
+
   def update_instance
     requesting_user = params["user_id"]
     unless admins.include?(requesting_user)

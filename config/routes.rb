@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   post '/instances/report', to: 'instances#list_instances'
   post '/instances/remind', to: 'instances#send_reminders'
   post '/instances/user-response', to: 'instances#user_response'
+  get '/', to: 'instances#healthcheck'
 end

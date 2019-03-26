@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: uat-ask-config-web
+  namespace: default
+data:
+  RAILS_ENV: 'production'
+  SLACK_DOMAIN: 'wyzant'
+  GATEKEEPER: 'U04M7SLEN'
+  ADMINS: ["U04M7SLEN"]
+  

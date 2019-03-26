@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: uat-ask-web
+spec:
+  revisionHistoryLimit: 2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: uat-ask
+      annotations:
+        sumologic.com/format: "json_merge"
+        sumologic.com/sourceCategory: "uat/web/uat-ask"
+        sumologic.com/sourceName: "gce_k8s_uat_ask"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: cloud.google.com/gke-nodepool
+                  operator: In
+                  values:
+                  - pool-4
+      containers:
+        - image: docker.wyzdev.dog/builds/uat-ask:latest
+          name: uat-ask-web
+          imagePullPolicy: Always
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: uat-ask-secrets
+                  key: db_user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: uat-ask-secrets
+                  key: db_pass
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: uat-ask-secrets
+                  key: secret_key_base
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: uat-ask-secrets
+                  key: bot_token
+          envFrom:
+            - configMapRef:
+                name: uat-ask-config
+            - configMapRef:
+                name: uat-ask-config-web
+          ports:
+            - containerPort: 3000
+              name: uat-ask-port
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: uat-ask-port
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: uat-ask-port
+            initialDelaySeconds: 3
+            periodSeconds: 3
+      imagePullSecrets:
+        - name: docker.wyzdev.dog

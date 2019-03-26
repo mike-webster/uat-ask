@@ -5,9 +5,9 @@ class InstancesController < ApplicationController
   skip_before_action :verify_authenticity_token
   ERR_V_MESSAGE = "Sorry, I think you forgot something..."
   ERR_ASK_INCOMPLETE = "please provide all required fields\n_(type `/uat-help` for more information)_"
-  ERR_ASK_UAT = "please provide iggy/waldo/learnable/mainsite"
-  ERR_ASK_FEATURE = "please provide a feature name - this tells lily what you want to put on UAT"
-  ERR_ASK_DESC = "please provide a description - tell lily what you're trying to do"
+  ERR_ASK_UAT = "please provide a feature name"
+  ERR_ASK_FEATURE = "please provide a feature name - this tells us what you want to put on UAT"
+  ERR_ASK_DESC = "please provide a description - tell us what you're trying to do"
 
   def ask_for_instance
     # need username originating request, name of type of uat

@@ -31,5 +31,4 @@ services:
       - /app/tmp/pids
       - .:/app
     environment:
-      - HOST=0.0.0.0
       - PORT=3000

@@ -6,7 +6,7 @@ volumes:
 
 services:
   db:
-    container_name: uat-ask-db
+    container_name: uat-env-gatekeeper-db
     restart: always
     image: mysql:5.7
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -17,7 +17,7 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
   app:
-    container_name: uat-ask-app
+    container_name: uat-env-gatekeeper
     restart: always
     build:
       context: .

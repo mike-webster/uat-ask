@@ -1,4 +1,4 @@
-# uat-ask
+# uat-env-gatekeeper
 A tool to help manage a UAT environment
 
 ## Dependencies

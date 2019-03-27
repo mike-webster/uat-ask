@@ -1,18 +1,18 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: uat-ask-web
+  name: uat-env-gatekeeper
 spec:
   revisionHistoryLimit: 2
   replicas: 1
   template:
     metadata:
       labels:
-        app: uat-ask
+        app: uat-env-gatekeeper
       annotations:
         sumologic.com/format: "json_merge"
-        sumologic.com/sourceCategory: "uat/web/uat-ask"
-        sumologic.com/sourceName: "gce_k8s_uat_ask"
+        sumologic.com/sourceCategory: "uat/web/uat-env-gatekeeper"
+        sumologic.com/sourceName: "gce_k8s_uat_env_gatekeeper"
     spec:
       affinity:
         nodeAffinity:
@@ -24,48 +24,46 @@ spec:
                   values:
                   - pool-4
       containers:
-        - image: docker.wyzdev.dog/builds/uat-ask:latest
-          name: uat-ask-web
+        - image: docker.wyzdev.dog/builds/uat-env-gatekeeper:latest
+          name: uat-env-gatekeeper
           imagePullPolicy: Always
           env:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: uat-ask-secrets
+                  name: uat-env-gatekeeper
                   key: db_user
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: uat-ask-secrets
+                  name: uat-env-gatekeeper
                   key: db_pass
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: uat-ask-secrets
+                  name: uat-env-gatekeeper
                   key: secret_key_base
             - name: BOT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: uat-ask-secrets
+                  name: uat-env-gatekeeper
                   key: bot_token
           envFrom:
             - configMapRef:
-                name: uat-ask-config
-            - configMapRef:
-                name: uat-ask-config-web
+                name: uat-env-gatekeeper-config
           ports:
             - containerPort: 3000
-              name: uat-ask-port
+              name: uat-env-gatekeeper-port
           livenessProbe:
             httpGet:
               path: /healthcheck
-              port: uat-ask-port
+              port: uat-env-gatekeeper-port
             initialDelaySeconds: 3
             periodSeconds: 3
           readinessProbe:
             httpGet:
               path: /healthcheck
-              port: uat-ask-port
+              port: uat-env-gatekeeper-port
             initialDelaySeconds: 3
             periodSeconds: 3
       imagePullSecrets:

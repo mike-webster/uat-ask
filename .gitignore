@@ -50,3 +50,4 @@ node_modules/
 # Ignore bin
 #bin/*
 
+uat-secrets-*.yaml

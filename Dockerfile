@@ -1,6 +1,6 @@
 FROM ruby:2.5-alpine3.8
 
-WORKDIR /uat-ask
+WORKDIR /uat-env-gatekeeper
 
 RUN apk update && \
     apk add --no-cache \
@@ -35,11 +35,11 @@ RUN apk add --no-cache \
         alpine-sdk \
         mariadb-dev
 
-COPY Gemfile* /uat-ask/
+COPY Gemfile* /uat-env-gatekeeper/
 
 RUN bundle install --jobs=4 --without development test
 
-COPY . /uat-ask
+COPY . /uat-env-gatekeeper
 
 RUN bundle exec rake assets:precompile
 
